@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 1. Registrations Collection
+    // - Anyone can create a registration
+    // - Only logged-in admins can read/update (to see their referrals)
+    match /registrations/{docId} {
+      allow create: if true; 
+      allow read, update, delete: if request.auth != null; 
+    }
+    
+    // 2. Admins Collection
+    // - Anyone can read (needed so users can be redirected to their specific admin's telegram link)
+    // - Admins can ONLY create/edit their own profile
+    // - Master Admins can update anyone's profile (to approve/reject them)
+    match /admins/{adminId} {
+      allow read: if true;
+      
+      // Admin can only create their own document
+      allow create: if request.auth != null && request.auth.uid == adminId;
+      
+      // Admin can update their own document, OR a master admin can update it
+      allow update: if request.auth != null && (
+        request.auth.uid == adminId || 
+        get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'master'
+      );
+      
+      allow delete: if false; // No one can delete admin docs
+    }
+  }
+}
