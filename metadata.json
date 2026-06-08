@@ -1,6 +1,0 @@
-{
-  "name": "FX Group Community",
-  "description": "A premium, 3D animated Forex community website with glassmorphism and automatic referral tracking.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
